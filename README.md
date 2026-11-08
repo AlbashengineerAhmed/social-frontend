@@ -1,174 +1,108 @@
-# 📱 SocialApp — Frontend Single Page Application (SPA)
+# 📱 SocialApp — Enterprise Frontend Single Page Application (SPA)
 
-A modern, responsive, and feature-rich social media web client built with **React 19**, **TypeScript**, **Vite**, and **Tailwind CSS v4**. Implements authentic Facebook and Instagram UI paradigms including animated stories, soundwave music trimming, live chat, interactive feeds, and an admin analytics suite.
-
----
-
-## 🌟 Key Highlights & Capabilities
-
-- 🎨 **Facebook & Instagram UI Design**:
-  - Floating vertical toolbar (`Aa`, `🎵`, `✨`, `📍`, `🎨`, `✏️`, `🗑️`).
-  - Frosted glass aesthetics (`backdrop-blur-md`), dark mode elements, and gradient transitions.
-- 📱 **Interactive 24-Hour Stories**:
-  - Horizontal story avatar rings with unread indicator badges.
-  - Fullscreen Story Viewer with **40-second smooth progress bars** and automatic advancement to the next story and user.
-  - **Draggable overlays**: Freely position music stickers, mention tags, and text captions across the canvas using pointer touch/mouse events.
-  - **Facebook-style Music Sticker**: Frosted rounded pill with cover art, track/artist title, and live equalizer audio waves.
-  - Interactive Viewers bottom sheet with viewer timestamps and quick emoji reactions (`❤️`, `🔥`, `👏`, `😂`, `😮`, `😢`).
-  - Delete story modal with thumbnail preview and auto-pause.
-- 🎵 **Integrated Music Library & 40s Waveform Trimmer**:
-  - Egyptian hits and online soundtracks library.
-  - Visual soundwave scrubber with draggable pink highlight window (40-second clip selection).
-  - Quick-jump preset buttons (`Intro`, `Verse`, `Chorus`, `Climax`).
-  - Zero-audio-leak cleanup stopping all sounds upon submission or modal close.
-- 💬 **Live Chat with Socket.IO**:
-  - Split-view desktop layout and mobile full-screen view.
-  - Instant incoming message alerts, media sending, and active conversation sorting.
-- 📰 **Feed & Social Actions**:
-  - Rich post composer supporting photos, videos, gradients, feelings, and locations.
-  - Facebook-style reaction picker (Like, Love, Care, Haha, Wow, Sad, Angry) with animated emojis.
-  - Threaded comment trees with nested reply forms.
-  - Share post dialog, bookmark/save post, and pull-to-refresh on mobile.
-- 👥 **Communities & Events**:
-  - Discover and manage community groups with member rosters.
-  - Scheduled events with interactive RSVP buttons (`Going`, `Interested`).
-- 🔔 **Real-Time Notification Hub**:
-  - Live socket notifications for interactions with unread counter badges.
-- 🎫 **Support Helpdesk & Admin Management**:
-  - User support ticket submission with priority levels.
-  - Full-featured Admin portal with analytics cards, user suspension, and reported content moderation queue.
-- ⚡ **Performance & Architecture**:
-  - Feature-based folder architecture matching industry best practices.
-  - Global state management using **Zustand** stores (`authStore`, `toastStore`, `notificationStore`).
-  - Fast bundle builds with **Vite** and **Tailwind CSS v4**.
+> **Framework:** React 19 + TypeScript + Vite  
+> **Styling Engine:** Tailwind CSS v4  
+> **State Management:** Zustand Stores (`auth`, `toast`, `notifications`)  
+> **Routing:** React Router v7  
+> **Deployment Target:** Vercel SPA  
 
 ---
 
-## 📁 Project Structure
+## 📖 Executive Summary
 
-```text
-social-frontend/
-├── index.html                             # Single page application entry HTML
-├── package.json                           # React 19, TypeScript, Vite & dependencies
-├── vite.config.ts                         # Vite configuration with Tailwind CSS plugin
-├── tsconfig.json                          # TypeScript project references
-├── vercel.json                            # Vercel SPA client-side routing rewrites
-├── public/
-│   ├── assets/
-│   │   ├── musics/                        # Local Egyptian & trending audio tracks (.mp3)
-│   │   └── images/                        # Static UI assets and icons
-│   └── favicon.svg                        # SocialApp brand favicon
-└── src/
-    ├── main.tsx                           # Application DOM mount
-    ├── App.tsx                            # Root router composition & global toaster
-    ├── index.css                          # Tailwind CSS imports & theme definitions
-    ├── app/
-    │   ├── layouts/                       # MainLayout with responsive Navbar & Sidebars
-    │   └── router/                        # React Router v7 routes & ProtectedRoute guards
-    ├── components/
-    │   ├── modals/
-    │   │   ├── CreateModal.tsx            # Unified Post & Story composer with 40s music trimmer
-    │   │   ├── StoryViewerModal.tsx       # 40s story playback, viewers sheet, Facebook music pill
-    │   │   ├── ShareModal.tsx             # Post sharing dialog
-    │   │   └── GoogleMapLocationModal.tsx # Location picker with maps integration
-    │   └── ui/                            # Reusable primitives (Button, Input, Card, Toaster)
-    ├── features/                          # Domain-driven feature modules
-    │   ├── auth/                          # Sign In, Sign Up, OTP Verification, Google Login
-    │   ├── feed/                          # Posts list, StoriesBar, PostCard, Music API
-    │   ├── messaging/                     # Socket.IO live chat & conversation threads
-    │   ├── profile/                       # User profile, follower counts, photo albums
-    │   ├── groups/                        # Groups discovery, detail pages, member lists
-    │   ├── events/                        # Events discovery, creation & RSVP
-    │   ├── notifications/                 # Notifications dropdown & full notifications page
-    │   ├── support/                       # User support ticketing & ticket status
-    │   ├── admin/                         # Admin dashboard, reports table, user management
-    │   └── settings/                      # Account settings & privacy preferences
-    ├── lib/
-    │   ├── axios.ts                       # Axios HTTP client with automatic JWT token injection
-    │   ├── socket.ts                      # Singleton Socket.IO client instance
-    │   └── apiClient.ts                   # Centralized API service helpers
-    ├── stores/                            # Zustand reactive stores
-    │   ├── authStore.ts                   # User authentication, token state & logout
-    │   ├── toastStore.ts                  # Toast notifications manager
-    │   └── notificationStore.ts           # Real-time notification counters & socket listener
-    └── types/                             # Global TypeScript interfaces & data contracts
-```
+The **SocialApp Frontend** is an enterprise-grade social networking client designed with authentic **Facebook & Instagram UI/UX paradigms**. It features 24-hour animated stories with interactive 40-second audio trimming, real-time messaging via Socket.IO, multi-emoji reaction pickers, community group hubs, event scheduling, and a full administrative moderation suite.
 
 ---
 
-## 🔄 Core Application User Flows
+## 🛠️ Technology Stack & Libraries
 
-### 1. Story Creation & 40-Second Playback Flow
-```text
-[Click 'Create Story'] ──> [Choose Photo/Video or Gradient Text]
-                       ──> [Tap 🎵 to pick local/online track]
-                       ──> [Drag 40s waveform scrubber to pick chorus]
-                       ──> [Drag music sticker & text to desired canvas coordinates]
-                       ──> [Click 'Share to Story'] ──> Audio stops immediately & story is live!
-```
-
-### 2. Story Viewing & Interaction Flow
-```text
-[Click Story in StoriesBar] ──> [Open Fullscreen StoryViewer]
-                            ──> [Progress bar starts 0% ──> 100% over 40s]
-                            ──> [Header shows clean audio attribution: 🎵 Track • Artist]
-                            ──> [Canvas shows sleek draggable Facebook music sticker]
-                            ──> [Send quick emoji reaction / reply]
-                            ──> [At 40s, auto-advances to the next story/user]
-```
-
-### 3. Post Publishing & Feed Engagement Flow
-```text
-[Home Feed] ──> [Create Post] ──> [Attach Media / Feelings / Location]
-            ──> [Publish] ──> [Live update in feed]
-            ──> [Followers react with animated emojis (Like, Love, Haha, Wow, Sad, Angry)]
-            ──> [Nested comment replies & real-time notification alerts]
-```
-
-### 4. Real-Time Chat Messaging Flow
-```text
-[Open Messages] ──> [Select Friend] ──> [Socket connects & room joins]
-                ──> [Send Text/Photo] ──> [Instant delivery bubble to recipient]
-```
+| Library / Tool | Version | Role / Purpose |
+| :--- | :--- | :--- |
+| **React** | `v19.3` | Modern declarative component-driven UI library with hooks |
+| **TypeScript** | `v6.0` | Compile-time strict type safety, interfaces, and API contracts |
+| **Vite** | `v8.3` | Next-generation bundler with instant Hot Module Replacement (HMR) |
+| **Tailwind CSS** | `v4.3` | Utility-first styling engine with native CSS variables and glassmorphism |
+| **React Router DOM** | `v7.18` | Declarative client-side routing, nested layouts, and route guards |
+| **Zustand** | `v5.0` | Minimalist, unopinionated atomic global state management |
+| **Socket.IO Client** | `v4.8` | Real-time WebSocket connection for chat and instant notifications |
+| **Axios** | `v1.21` | HTTP client with request/response interceptors for JWT token injection |
+| **Lucide React** | `v1.69` | Consistent, accessible SVG icon library |
 
 ---
 
-## 🛠️ Local Development Setup
+## 🗺️ Application Routing Matrix
 
-1. **Install dependencies**:
-   ```bash
-   cd social-frontend
-   npm install
-   ```
-
-2. **Configure Environment Variables**:
-   Create a `.env` file in `social-frontend/` (optional, defaults to `http://localhost:3001`):
-   ```env
-   VITE_API_BASE_URL="http://localhost:3001"
-   VITE_SOCKET_URL="http://localhost:3001"
-   ```
-
-3. **Start Vite development server**:
-   ```bash
-   npm run dev
-   ```
-   Open `http://localhost:5173` in your browser.
-
-4. **Type-check and build for production**:
-   ```bash
-   npm run build
-   ```
-
-5. **Preview production build locally**:
-   ```bash
-   npm run preview
-   ```
+| Route Path | Component | Layout | Access Guard | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `/` | `FeedPage` | `MainLayout` | Protected | Main newsfeed with StoriesBar, Post composer, and widgets |
+| `/signin` | `SignInPage` | Auth Layout | Public Only | Email/password sign-in and Google OAuth2 button |
+| `/signup` | `SignUpPage` | Auth Layout | Public Only | New account registration with OTP email verification |
+| `/messages` | `MessagingPage` | `MainLayout` | Protected | Split-screen real-time chat with active conversation rooms |
+| `/notifications`| `NotificationsPage`| `MainLayout`| Protected | Real-time notification activity center with read toggles |
+| `/profile/:id` | `ProfilePage` | `MainLayout` | Protected | User profile, cover/avatar images, follower counts, and posts |
+| `/groups` | `GroupsPage` | `MainLayout` | Protected | Community discovery directory and group creation modal |
+| `/groups/:id` | `GroupDetailPage` | `MainLayout` | Protected | Group feed, member directory, and join request actions |
+| `/events` | `EventsPage` | `MainLayout` | Protected | Upcoming events catalog and RSVP attendance buttons |
+| `/events/:id` | `EventDetailPage` | `MainLayout` | Protected | Event schedule, map location, and attendees list |
+| `/videos` | `VideosPage` | `MainLayout` | Protected | Dedicated video feed and reels player |
+| `/albums` | `AlbumsPage` | `MainLayout` | Protected | User photo and media album galleries |
+| `/support` | `SupportInboxPage` | `MainLayout` | Protected | Help desk ticket submission and support conversation thread |
+| `/settings` | `SettingsPage` | `MainLayout` | Protected | Account preferences, password update, and account deactivation |
+| `/admin` | `AdminOverviewPage`| `AdminLayout`| **Admin Only** | SuperAdmin platform KPIs, metrics, and traffic statistics |
+| `/admin/users` | `AdminUsersPage` | `AdminLayout`| **Admin Only** | User management, role elevation (`Admin`), and account banning |
+| `/admin/posts` | `AdminPostsPage` | `AdminLayout`| **Admin Only** | Post moderation, soft-delete, and restoration |
+| `/admin/reports`| `AdminReportsPage`| `AdminLayout`| **Admin Only** | Moderation queue for user-submitted content reports |
+| `*` | `NotFoundPage` | Simple Layout | Public | Clean 404 page with return to home navigation |
 
 ---
 
-## 🚀 Deployment (Vercel)
+## 🗄️ State Management Architecture (Zustand Stores)
 
-The frontend includes a [`vercel.json`](./vercel.json) file configured for Single Page Application client-side routing:
+| Store Name | File Path | Core State Attributes | Primary Actions |
+| :--- | :--- | :--- | :--- |
+| **`authStore`** | `src/stores/authStore.ts` | `user`, `accessToken`, `refreshToken`, `isAuthenticated` | `login()`, `logout()`, `updateUser()`, `refreshAuth()` |
+| **`notificationStore`**| `src/stores/notificationStore.ts` | `notifications[]`, `unreadCount` | `fetchNotifications()`, `markAsRead()`, `addNotification()` |
+| **`toastStore`** | `src/stores/toastStore.ts` | `toasts[]` (`id`, `type`, `title`, `message`, `duration`) | `toast.success()`, `toast.error()`, `toast.info()`, `remove()` |
+
+---
+
+## 🌟 Core Feature Modules & UI Matrix
+
+| Feature | Primary Components | Key Capabilities & Architecture |
+| :--- | :--- | :--- |
+| **24-Hour Stories** | `StoriesBar.tsx`<br>`StoryViewerModal.tsx` | • Horizontal story ring list with unread gradient borders.<br>• **40-second smooth progression** with auto-advance to next story/user.<br>• Draggable overlays (music, text captions, mentions) with touch coordinates.<br>• **Facebook-style music sticker** (frosted pill, cover, bold title, equalizer wave).<br>• Real-time viewers bottom sheet with read timestamps and quick emoji reactions.<br>• Dedicated story deletion modal with auto-pause. |
+| **Music Trimmer (40s)**| `CreateModal.tsx` | • Local Egyptian hits + royalty-free soundtrack catalog.<br>• **40-second waveform scrubber** with draggable highlight frame.<br>• Quick-jump chorus presets (`Intro`, `Verse`, `Chorus`, `Climax`).<br>• Guaranteed zero-audio-leak cleanup on submit, close, or unmount. |
+| **Post Composer** | `CreatePostCard.tsx`<br>`CreateModal.tsx` | • Vertical tool column (`Aa`, `🎵`, `✨`, `📍`, `🎨`, `✏️`, `🗑️`).<br>• Text posts with dynamic gradients and customizable font colors.<br>• Cloudinary image/video attachments with preview removal.<br>• Feelings/Activities picker and Google Maps location tagging. |
+| **Interactive Feed** | `FeedPage.tsx`<br>`PostCard.tsx` | • Facebook-style reaction picker with animated emojis (Like, Love, Care...).<br>• Multi-level threaded comments and nested replies.<br>• Share dialog with direct link copying and feed re-sharing.<br>• Mobile pull-to-refresh gesture and bookmarking. |
+| **Live Chat** | `MessagingPage.tsx` | • Socket.IO bidirectional message delivery.<br>• Active conversations list with unread counter badges.<br>• Image upload preview inside chat bubbles.<br>• Typing indicators and online status presence. |
+| **Admin Portal** | `AdminLayout.tsx`<br>`AdminSidebar.tsx` | • Analytical KPI cards (users, posts, active stories, open tickets).<br>• Paginated users table with role toggle and ban/unban switches.<br>• Content reports queue with action resolutions (Warn, Delete, Dismiss). |
+
+---
+
+## ⚡ Socket.IO Client Event Matrix
+
+| Event Name | Type | Payload Received / Sent | UI Impact |
+| :--- | :--- | :--- | :--- |
+| `connect` | Built-in | Socket ID | Establishes authenticated connection with JWT token handshake |
+| `newMessage` | Inbound | `{ message, conversationId }` | Appends chat bubble and increments unread badge |
+| `userTyping` | Inbound | `{ userId, conversationId }` | Displays "Typing..." dots in conversation window |
+| `newNotification`| Inbound| `{ notification }` | Increments bell icon counter & triggers toast alert |
+| `storyReaction` | Inbound | `{ storyId, emoji, user }` | Displays floating reaction toast on active story |
+
+---
+
+## ⚙️ Frontend Environment Variables
+
+| Variable | Default Value | Description |
+| :--- | :--- | :--- |
+| `VITE_API_BASE_URL` | `http://localhost:3001` | Backend REST API server URL (e.g. `https://social-backend.vercel.app`) |
+| `VITE_SOCKET_URL` | `http://localhost:3001` | Socket.IO WebSocket server host (e.g. `https://social-backend.onrender.com`) |
+
+---
+
+## 🚀 Deployment (Vercel SPA Configuration)
+
+The repository includes [`vercel.json`](./vercel.json) to handle Single Page Application client routing:
 
 ```json
 {
@@ -181,10 +115,10 @@ The frontend includes a [`vercel.json`](./vercel.json) file configured for Singl
 }
 ```
 
-1. Push your code to GitHub.
-2. In the [Vercel Dashboard](https://vercel.com), click **Add New Project** and select `social-frontend`.
-3. Set the Framework Preset to **Vite**.
-4. In **Environment Variables**, add:
-   - `VITE_API_BASE_URL`: URL of your deployed backend (e.g. `https://social-backend.vercel.app` or `https://social-backend.onrender.com`).
-   - `VITE_SOCKET_URL`: URL of your deployed Socket.IO server.
-5. Click **Deploy**. Vercel will build and serve your app globally with zero configuration.
+### Deployment Step-by-Step Matrix:
+| Step | Action | Platform | Command / Details |
+| :---: | :--- | :--- | :--- |
+| **1** | Import Repository | Vercel Dashboard | Select `AlbashengineerAhmed/social-frontend` |
+| **2** | Framework Preset | Vercel Settings | Preset: **Vite** (Build: `npm run build`, Output: `dist`) |
+| **3** | Environment Variables | Vercel Project Settings | Set `VITE_API_BASE_URL` and `VITE_SOCKET_URL` |
+| **4** | Deploy | Vercel Web | Click **Deploy** ➔ Live globally distributed CDN deployment |
