@@ -14,6 +14,7 @@ import {
   User,
   HelpCircle,
   Menu,
+  X,
   Shield
 } from 'lucide-react';
 import { useAuth } from '../../features/auth/context/AuthContext';
@@ -24,12 +25,18 @@ export const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
   const { unreadCount, fetchUnreadCount, incrementUnread } = useNotificationStore();
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
+
+  // Auto-close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
 
   // Fetch initial unread count and listen for live notifications
   useEffect(() => {
@@ -73,12 +80,12 @@ export const Navbar: React.FC = () => {
           <div className="flex items-center gap-2 sm:gap-6">
             <button
               type="button"
-              onClick={() => window.dispatchEvent(new CustomEvent('open-mobile-sidebar'))}
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="lg:hidden p-2 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors cursor-pointer"
-              aria-label="Open sidebar"
-              title="Open sidebar"
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              title={mobileMenuOpen ? "Close menu" : "Open menu"}
             >
-              <Menu className="w-5 h-5" />
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
 
             <Link to="/" className="flex items-center gap-2">
@@ -334,6 +341,149 @@ export const Navbar: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Mobile Drawer (Toggled by Hamburger Menu Button) */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden border-t border-gray-100 bg-white px-4 py-3 shadow-lg space-y-3 animate-in slide-in-from-top-2 duration-150">
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+              <Search className="h-4 w-4" />
+            </div>
+            <input
+              type="search"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-4 py-2 bg-gray-100 border border-transparent rounded-lg text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-blue-500 transition-all"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            <Link
+              to="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center gap-2 p-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                isActive('/') ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <Home className="w-4 h-4 text-blue-500" />
+              <span>Feed</span>
+            </Link>
+            <Link
+              to="/groups"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center gap-2 p-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                isActive('/groups') ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <Users className="w-4 h-4 text-indigo-500" />
+              <span>Groups</span>
+            </Link>
+            <Link
+              to="/events"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center gap-2 p-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                isActive('/events') ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <Calendar className="w-4 h-4 text-amber-500" />
+              <span>Events</span>
+            </Link>
+            <Link
+              to="/albums"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center gap-2 p-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                isActive('/albums') ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <Image className="w-4 h-4 text-emerald-500" />
+              <span>Albums</span>
+            </Link>
+            <Link
+              to="/videos"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center gap-2 p-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                isActive('/videos') ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <Video className="w-4 h-4 text-rose-500" />
+              <span>Videos</span>
+            </Link>
+            <Link
+              to="/messaging"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center gap-2 p-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                isActive('/messaging') ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <MessageSquare className="w-4 h-4 text-cyan-500" />
+              <span>Messages</span>
+            </Link>
+          </div>
+
+          {user && (user.isAdmin || user.systemRole === 'admin' || user.systemRole === 'superAdmin') && (
+            <Link
+              to="/admin"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-2 p-2.5 rounded-xl text-xs font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
+            >
+              <Shield className="w-4 h-4 text-blue-600" />
+              <span>Admin Panel</span>
+            </Link>
+          )}
+        </div>
+      )}
+
+      {/* Mobile Top Navigation Tabs Bar (Directly visible on mobile & tablet < lg) */}
+      <nav className="lg:hidden border-t border-gray-100 bg-white/95 backdrop-blur-xs px-2 py-1 shadow-xs">
+        <div className="flex items-center justify-around gap-1 max-w-lg mx-auto">
+          <Link
+            to="/"
+            className={`flex items-center justify-center gap-1.5 flex-1 py-1.5 px-2 rounded-xl text-xs font-semibold transition-all ${
+              isActive('/') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <Home className="w-4 h-4 shrink-0" />
+            <span>Feed</span>
+          </Link>
+          <Link
+            to="/groups"
+            className={`flex items-center justify-center gap-1.5 flex-1 py-1.5 px-2 rounded-xl text-xs font-semibold transition-all ${
+              isActive('/groups') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <Users className="w-4 h-4 shrink-0" />
+            <span>Groups</span>
+          </Link>
+          <Link
+            to="/events"
+            className={`flex items-center justify-center gap-1.5 flex-1 py-1.5 px-2 rounded-xl text-xs font-semibold transition-all ${
+              isActive('/events') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <Calendar className="w-4 h-4 shrink-0" />
+            <span>Events</span>
+          </Link>
+          <Link
+            to="/albums"
+            className={`flex items-center justify-center gap-1.5 flex-1 py-1.5 px-2 rounded-xl text-xs font-semibold transition-all ${
+              isActive('/albums') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <Image className="w-4 h-4 shrink-0" />
+            <span>Albums</span>
+          </Link>
+          <Link
+            to="/videos"
+            className={`flex items-center justify-center gap-1.5 flex-1 py-1.5 px-2 rounded-xl text-xs font-semibold transition-all ${
+              isActive('/videos') ? 'text-blue-600 bg-blue-50 font-bold' : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <Video className="w-4 h-4 shrink-0" />
+            <span>Videos</span>
+          </Link>
+        </div>
+      </nav>
     </header>
   );
 };
