@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { createPortal } from 'react-dom';
 import { ProfileSidebar } from '../components/ProfileSidebar';
 import { CreatePostCard } from '../components/CreatePostCard';
 import { PostCard } from '../components/PostCard';
@@ -11,7 +10,7 @@ import { useAuth } from '../../auth/context/AuthContext';
 import { postApi } from '../api/post.api';
 import type { Post } from '../../../types';
 import { toast } from '../../../stores/toastStore';
-import { RotateCw, Menu, X } from 'lucide-react';
+import { RotateCw, Menu } from 'lucide-react';
 
 // Verify if a string is a valid 24-char hex MongoDB ObjectId
 const isValidObjectId = (id: string): boolean => /^[0-9a-fA-F]{24}$/.test(id);
@@ -45,13 +44,6 @@ export const FeedPage: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-
-  useEffect(() => {
-    const handleOpenMobileSidebar = () => setIsMobileSidebarOpen(true);
-    window.addEventListener('open-mobile-sidebar', handleOpenMobileSidebar);
-    return () => window.removeEventListener('open-mobile-sidebar', handleOpenMobileSidebar);
-  }, []);
 
   const fetchFeed = useCallback(async (isRefresh = false) => {
     if (isRefresh) {
@@ -255,7 +247,7 @@ export const FeedPage: React.FC = () => {
                 </div>
                 <button
                   type="button"
-                  onClick={() => setIsMobileSidebarOpen(true)}
+                  onClick={() => window.dispatchEvent(new CustomEvent('open-mobile-sidebar'))}
                   className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer shrink-0 ml-2"
                 >
                   <Menu className="w-3.5 h-3.5" />
@@ -317,41 +309,6 @@ export const FeedPage: React.FC = () => {
           <RightWidgets />
         </aside>
       </div>
-
-      {/* Mobile Off-Canvas Sidebar Drawer (Facebook / Mobile App Style) */}
-      {isMobileSidebarOpen &&
-        createPortal(
-          <div className="fixed inset-0 z-[9999] flex lg:hidden animate-in fade-in duration-200">
-            {/* Backdrop */}
-            <div
-              className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
-              onClick={() => setIsMobileSidebarOpen(false)}
-            />
-
-            {/* Slide-in Drawer Container */}
-            <div className="relative w-80 max-w-[85vw] h-full bg-[#f5f7f9] shadow-2xl z-10 flex flex-col p-4 overflow-y-auto animate-in slide-in-from-left duration-300">
-              <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-200/70">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
-                    <Menu className="w-4 h-4" />
-                  </div>
-                  <span className="text-sm font-bold text-gray-900">Sidebar & Shortcuts</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setIsMobileSidebarOpen(false)}
-                  className="w-8 h-8 rounded-full bg-white hover:bg-gray-100 border border-gray-200 text-gray-600 flex items-center justify-center transition-colors cursor-pointer"
-                  aria-label="Close sidebar"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              <ProfileSidebar user={user} />
-            </div>
-          </div>,
-          document.body
-        )}
     </>
   );
 };
